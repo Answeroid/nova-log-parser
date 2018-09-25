@@ -9,13 +9,15 @@ lgr = logger.Logger.__call__().get_logger()
 
 
 def _collect_files(walk_dir="./"):
-    """[Return list of absolute file paths of given dir]
-
-    Arguments:
-        walk_dir {[str]} -- [path to directory
-        to use it as root and traverse over subdirs
-        and get all absolute file paths as a list]
     """
+    Collect list of absolute file paths of given dir
+
+    :param walk_dir: {[str]} -- path to directory
+    to use it as root and traverse over subdirs
+    and get all absolute file paths as a list
+    :return: {[list]} list with files paths
+    """
+
     lgr.info("Collecting files from {} dir".format(os.path.abspath(walk_dir)))
     files_paths_list = []
     for root, _, files in os.walk(os.path.abspath(walk_dir)):
@@ -28,13 +30,15 @@ def _collect_files(walk_dir="./"):
 
 
 def _bz2_unpacker(files_paths_list):
-    """[Takes a list with absolute file paths
-    and decompress them 1 by 1 from bz2
-    to original file to the same dir]
-
-    Arguments:
-        files_paths_list {[list]} -- [list with absolute file paths]
     """
+    Takes a list with absolute file paths
+    and decompress them 1 by 1 from .bz2
+    to original file to the same dir
+
+    :param files_paths_list: {[list]} -- list with absolute file paths
+    :return:
+    """
+
     lgr.info("Searching for .bz2 files...")
 
     for file_path in files_paths_list:
@@ -51,12 +55,13 @@ def _bz2_unpacker(files_paths_list):
 
 
 def _gz_unpacker(files_paths_list):
-    """[Takes a list with absolute file paths
-    and unzip them 1 by 1 from gz
-    to original file to the same dir]
+    """
+    Takes a list with absolute file paths
+    and unzip them 1 by 1 from .gz
+    to original file to the same dir
 
-    Arguments:
-        files_paths_list {[list]} -- [list with absolute file paths]
+    :param files_paths_list: {[list]} -- list with absolute file paths
+    :return: None
     """
 
     for file_path in files_paths_list:
@@ -74,11 +79,32 @@ def _gz_unpacker(files_paths_list):
 
 
 def decompress_unpack_files(walk_dir):
-    """[Decompress and unpack files from given folder]
+    """
+    Decompress and unpack files from given folder
 
-    Arguments:
-        walk_dir {[str]} -- [path to logs directory]
+    :param walk_dir: {[str]} -- path to logs directory
+    :return: None
     """
 
     _bz2_unpacker(_collect_files(walk_dir))
     _gz_unpacker(_collect_files(walk_dir))
+
+
+def collect_logs(walk_dir="./"):
+    """
+    Collects not compressed/archived log files
+    :param walk_dir: {[str]} -- path to logs directory
+    :return: {[list]} -- list with not compressed/archived log files
+    """
+
+    lgr.info("Collecting files from {} dir...".format(walk_dir))
+    files_paths_list = _collect_files(walk_dir)
+    ready_log_files = []
+    for file_path in files_paths_list:
+        if not file_path.endswith(".bz2") and not file_path.endswith(".gz"):
+            lgr.debug("Found {} file which seems to be ready "
+                      "for processing...Collected.".format(file_path))
+            ready_log_files.append(file_path)
+    lgr.debug("ready_log_files:\n{}".format(ready_log_files))
+    lgr.info("Processed given dir...")
+    return ready_log_files
