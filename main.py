@@ -5,11 +5,12 @@ import logger
 
 def main():
     lgr = logger.Logger.__call__().get_logger()
-    if sys.argv[1]:
+
+    if 1 < len(sys.argv):
         lgr.info("Trying to process {} \
         dir...".format(sys.argv[1]))
         files_processor.decompress_unpack_files(sys.argv[1])
-    elif not sys.argv[1]:
+    elif len(sys.argv) < 2:
         try:
             lgr.info("Did not find cmd argument, \
             processing default logs dir...")

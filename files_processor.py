@@ -8,7 +8,7 @@ import logger
 lgr = logger.Logger.__call__().get_logger()
 
 
-def _collect_files(walk_dir):
+def _collect_files(walk_dir="./"):
     """[Return list of absolute file paths of given dir]
 
     Arguments:
@@ -17,15 +17,14 @@ def _collect_files(walk_dir):
         and get all absolute file paths as a list]
     """
     lgr.info("Collecting files from {} dir".format(os.path.abspath(walk_dir)))
-
+    files_paths_list = []
     for root, _, files in os.walk(os.path.abspath(walk_dir)):
-        files_paths_list = []
         for filename in files:
             file_path = os.path.join(root, filename)
             files_paths_list.append(file_path)
-        lgr.debug("files_paths_list:\n", format(files_paths_list))
+        lgr.debug("files_paths_list:\n{}", format(files_paths_list))
         lgr.info("Processed given dir...")
-        return files_paths_list
+    return files_paths_list
 
 
 def _bz2_unpacker(files_paths_list):
@@ -42,13 +41,13 @@ def _bz2_unpacker(files_paths_list):
         lgr.debug("Processing file {}...".format(file_path))
         if file_path.endswith('.bz2'):
             new_file_path = file_path.replace('.bz2', '')
-            lgr.debug("File {} compressed, trying to decompress \
-            it to {}...".format(file_path, new_file_path))
+            lgr.debug("File {} compressed, trying to decompress "
+                      "it to {} ...".format(file_path, new_file_path))
             with open(new_file_path, 'wb') as new_file, bz2.BZ2File(file_path, 'rb') as file:
                 for data in iter(lambda: file.read(100 * 1024), b''):
-                    lgr.debug("Writing data {}...".format(new_file_path))
+                    lgr.debug("Writing data to {} ...".format(new_file_path))
                     new_file.write(data)
-                    lgr.debug("Done...")
+                    lgr.debug("Decompressed successfully!")
 
 
 def _gz_unpacker(files_paths_list):
@@ -61,11 +60,17 @@ def _gz_unpacker(files_paths_list):
     """
 
     for file_path in files_paths_list:
+        lgr.debug("Processing file {}...".format(file_path))
         if file_path.endswith('.gz'):
             new_file_path = file_path.replace('.gz', '')
+            lgr.debug("File {} compressed, trying to decompress "
+                      "it to {} ...".format(file_path, new_file_path))
             with gzip.open(file_path, 'rb') as file_in:
                 with open(new_file_path, 'wb') as file_out:
+                    lgr.debug("Copying file object "
+                              "from {} to {} ...".format(file_path, new_file_path))
                     shutil.copyfileobj(file_in, file_out)
+            lgr.debug("Unpacked successfully!")
 
 
 def decompress_unpack_files(walk_dir):
