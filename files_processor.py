@@ -15,7 +15,7 @@ def _collect_files(walk_dir="./"):
     :param walk_dir: {[str]} -- path to directory
     to use it as root and traverse over subdirs
     and get all absolute file paths as a list
-    :return: {[list]} list with files paths
+    :return: list[str]
     """
 
     lgr.info("Collecting files from {} dir".format(os.path.abspath(walk_dir)))
@@ -24,8 +24,8 @@ def _collect_files(walk_dir="./"):
         for filename in files:
             file_path = os.path.join(root, filename)
             files_paths_list.append(file_path)
-        lgr.debug("files_paths_list:\n{}", format(files_paths_list))
-        lgr.info("Processed given dir...")
+        lgr.debug("files_paths_list:\n{}".format(files_paths_list))
+        lgr.info("Processed {} dir...".format(os.path.abspath(walk_dir)))
     return files_paths_list
 
 
@@ -35,8 +35,8 @@ def _bz2_unpacker(files_paths_list):
     and decompress them 1 by 1 from .bz2
     to original file to the same dir
 
-    :param files_paths_list: {[list]} -- list with absolute file paths
-    :return:
+    :param files_paths_list: list -- list with absolute file paths
+    :return: None
     """
 
     lgr.info("Searching for .bz2 files...")
@@ -60,7 +60,7 @@ def _gz_unpacker(files_paths_list):
     and unzip them 1 by 1 from .gz
     to original file to the same dir
 
-    :param files_paths_list: {[list]} -- list with absolute file paths
+    :param files_paths_list: list -- list with absolute file paths
     :return: None
     """
 
@@ -82,7 +82,7 @@ def decompress_unpack_files(walk_dir):
     """
     Decompress and unpack files from given folder
 
-    :param walk_dir: {[str]} -- path to logs directory
+    :param walk_dir: str -- path to logs directory
     :return: None
     """
 
@@ -93,8 +93,8 @@ def decompress_unpack_files(walk_dir):
 def collect_logs(walk_dir="./"):
     """
     Collects not compressed/archived log files
-    :param walk_dir: {[str]} -- path to logs directory
-    :return: {[list]} -- list with not compressed/archived log files
+    :param walk_dir: str -- path to logs directory
+    :return: list[str] -- list with not compressed/archived log files
     """
 
     lgr.info("Collecting files from {} dir...".format(walk_dir))
@@ -106,5 +106,22 @@ def collect_logs(walk_dir="./"):
                       "for processing...Collected.".format(file_path))
             ready_log_files.append(file_path)
     lgr.debug("ready_log_files:\n{}".format(ready_log_files))
-    lgr.info("Processed given dir...")
+    lgr.info("Processed {} dir...".format(os.path.abspath(walk_dir)))
     return ready_log_files
+
+
+def get_file_objects(walk_dir="./"):
+    """
+    Get file objects
+    :param walk_dir: str -- path to logs directory
+    :return: list[Object]
+    """
+
+    file_objects = []
+    lgr.info("Trying to get file objects...")
+    ready_log_files = collect_logs(walk_dir)
+    for log_file in ready_log_files:
+        lgr.debug("Appending file {} to file_objects list...".format(log_file))
+        file_objects.append(open(log_file, 'r'))
+    lgr.debug("file_objects:\n{}".format(file_objects))
+    return file_objects

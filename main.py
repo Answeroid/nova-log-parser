@@ -23,6 +23,9 @@ def main():
         raise EnvironmentError("Unknown error occurred or \
         log directory was not provided...")
 
+    lgr.info("Getting file objects...")
+    file_objects = files_processor.get_file_objects(sys.argv[1])
+
 
 if __name__ == "__main__":
     main()
