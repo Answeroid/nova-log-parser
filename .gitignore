@@ -103,5 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# test logs dir
+# Custom exclusion
 logs/*
+log/*
+.idea/*
