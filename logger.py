@@ -16,7 +16,7 @@ class Logger(object, metaclass=Singleton):
     _logger = None
 
     def __init__(self):
-        self._logger = logging.getLogger("log-processor")
+        self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s \t [%(levelname)s | %(filename)s:%(lineno)s] > %(message)s')
 
