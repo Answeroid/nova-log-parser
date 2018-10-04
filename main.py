@@ -25,6 +25,20 @@ def main():
 
     lgr.info("Getting file objects...")
     file_objects = files_processor.get_file_objects(sys.argv[1])
+    lgr.info("Processing log lines...")
+
+    parsed_log_entries = []
+    for file_object in file_objects:
+        for entry in file_object:
+            parsed_log_entries.append(files_processor.parse_log_entry(entry))
+
+    log_entries_objects = []
+    for parsed_log_entry in parsed_log_entries:
+        log_entries_objects.append(files_processor.create_parsed_log_entry_object(parsed_log_entry))
+
+    lgr.debug("BINGO!!!")
+    import pdb
+    pdb.set_trace()
 
 
 if __name__ == "__main__":
